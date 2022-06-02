@@ -4,33 +4,52 @@ using UnityEngine;
 
 public class Ghost : MonoBehaviour
 {
-    [SerializeField] private float speed = 60;
+    [SerializeField] private float speed = 100;
     [SerializeField] private Transform wallProbe;
     [SerializeField] private float probeRadius = 5;
     [SerializeField] private LayerMask probeMask;
+    [SerializeField] private float deathAngle = 20;
+    [SerializeField] private int damage = 1;
+    [SerializeField] private int maxHealth = 1;
+    [SerializeField] private GameObject deathEffectPrefab;
+    [SerializeField] private Transform deathEffectSpawnPoint;
+    [SerializeField] private LineRenderer StunnedGfx;
 
     private Rigidbody2D rb;
     private float dirX = 1;
+    private int health;
+
+    private float freezeTimer = 0.0f;
+    private bool frozenThisFrame;
+    private float thawTimer = 0.0f;
 
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
+        health = maxHealth;
     }
 
     void Update()
     {
         Vector3 currentVelocity = rb.velocity;
 
-        Collider2D collider = Physics2D.OverlapCircle(wallProbe.position, probeRadius, probeMask);
-        if (collider != null)
+        if (thawTimer > 0.0f)
         {
-            currentVelocity = SwitchDirection(currentVelocity);
+            currentVelocity.x = 0;
+
+            thawTimer -= Time.deltaTime;
         }
-        
+        else
+        {
 
-        currentVelocity.x = speed * dirX;
-
-        rb.velocity = currentVelocity;
+            Collider2D collider = Physics2D.OverlapCircle(wallProbe.position, probeRadius, probeMask);
+            if (collider != null)
+            {
+                currentVelocity = SwitchDirection(currentVelocity);
+            }
+            
+            currentVelocity.x = speed * dirX;
+        }
 
         if ((currentVelocity.x > 0) && (transform.right.x < 0))
         {
@@ -40,6 +59,8 @@ public class Ghost : MonoBehaviour
         {
             transform.rotation = Quaternion.Euler(0, 180, 0);
         }
+
+        rb.velocity = currentVelocity;
     }
 
     private Vector3 SwitchDirection(Vector3 currentVelocity)
@@ -54,6 +75,55 @@ public class Ghost : MonoBehaviour
         return currentVelocity;
     }
 
+    private void OnTriggerStay2D(Collider2D collider)
+    {
+        var player = collider.GetComponent<Player>();
+        if (player != null)
+        {
+            if (player.transform.position.y > transform.position.y)
+            {
+                Rigidbody2D playerRB = player.GetComponent<Rigidbody2D>();
+                float dp = Vector3.Dot(Vector3.down, playerRB.velocity.normalized);
+                float angle = Mathf.Acos(dp) * Mathf.Rad2Deg;
+
+                if (angle < deathAngle)
+                {
+                    DealDamage(1);
+
+                    Vector2 currentPlayerVelocity = playerRB.velocity;
+                    currentPlayerVelocity.y = player.GetJumpSpeed();
+                    playerRB.velocity = currentPlayerVelocity;
+
+                    return;
+                }
+            }
+            player.DealDamage(damage, transform);
+        }
+    }
+
+    public void DealDamage(int damage)
+    {
+        health = health - damage;
+
+        Debug.Log($"Ouch Enemy, health={health}");
+        /*
+        if (health <= 0)
+        {
+            Destroy(gameObject);
+            
+
+            if (deathEffectPrefab != null)
+            {
+                Instantiate(deathEffectPrefab, deathEffectSpawnPoint.position, deathEffectSpawnPoint.rotation);
+            }
+        }
+        else
+        {
+
+        }
+        */
+    }
+
     void OnDrawGizmos()
     {
         if (wallProbe)
@@ -63,4 +133,43 @@ public class Ghost : MonoBehaviour
         }
     }
 
+    public void Freeze()
+    {
+        freezeTimer += Time.deltaTime;
+        frozenThisFrame = true;
+
+        if (freezeTimer > 2.0f)
+        {
+            thawTimer = 2.0f;
+        }
+    }
+
+    private void LateUpdate()
+    {
+        if (!frozenThisFrame)
+        {
+            freezeTimer = 0;
+        }
+
+        if (StunnedGfx)
+        {
+            if ((freezeTimer > 0) || (thawTimer > 0))
+            {
+                StunnedGfx.enabled = true;
+
+                var color = StunnedGfx.startColor;
+                color.a = Mathf.Clamp01(Mathf.Max(freezeTimer, thawTimer) / 2.0f);
+                StunnedGfx.startColor = color;
+                color = StunnedGfx.endColor;
+                color.a = Mathf.Clamp01(Mathf.Max(freezeTimer, thawTimer) / 2.0f);
+                StunnedGfx.endColor = color;
+            }
+            else
+            {
+                StunnedGfx.enabled = false;
+            }
+        }
+
+        frozenThisFrame = false;
+    }
 }
