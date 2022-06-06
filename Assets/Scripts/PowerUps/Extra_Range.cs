@@ -9,10 +9,13 @@ public class Extra_Range : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D collider)
     {
-        var Cannon_Beam = collider.GetComponent<Cannon_Beam>();
-        if (Cannon_Beam == null) return;
+        var player = collider.GetComponent<Player>();
+        if (player == null) return;
 
-        Cannon_Beam.IncreaseRange(extraRange);
+        var cannon = FindObjectOfType<Cannon_Beam>();
+        if (cannon == null)return;
+
+        cannon.IncreaseRange(extraRange);
 
         if (effectPrefab != null)
         {

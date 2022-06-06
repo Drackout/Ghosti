@@ -178,7 +178,6 @@ public class Player : MonoBehaviour
 
         if (health <= 0)
         {
-            anim.SetTrigger("Dead");
 
             rb.velocity = new Vector2(0, jumpSpeed * 2);
             spriteRenderer.sortingOrder = 2;
@@ -191,7 +190,6 @@ public class Player : MonoBehaviour
 
             if (sourceDamageTransform != null)
             {
-                anim.SetTrigger("Hurt");
 
                 Vector2 direction = new Vector2(0.0f, 1.0f);
 
@@ -226,5 +224,15 @@ public class Player : MonoBehaviour
     {
         maxJumpCount += extraJump;
     }
+
+    /*
+    public void IncreaseCannonRange(int extraRange)
+    {
+        var Cannon_Beam = Player.GetComponent<Cannon_Beam>();
+        if (Cannon_Beam == null) return;
+
+        Cannon_Beam.IncreaseRange(extraRange);
+    }
+    */
 
 }
