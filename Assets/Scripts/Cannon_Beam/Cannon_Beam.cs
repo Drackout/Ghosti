@@ -82,4 +82,9 @@ public class Cannon_Beam : MonoBehaviour
             line.enabled = false;            
         }
     }
+
+    public void IncreaseRange(int extraRange)
+    {
+        maxLength += extraRange;
+    }
 }

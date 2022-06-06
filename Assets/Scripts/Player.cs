@@ -97,11 +97,6 @@ public class Player : MonoBehaviour
         {
             transform.rotation = Quaternion.Euler(0, 180, 0);
         }
-        
-
-        anim.SetFloat("AbsSpeedX", Mathf.Abs(currentVelocity.x));
-        anim.SetFloat("SpeedY", currentVelocity.y);
-        anim.SetBool("onGround", onGround);
 
         // Animations
         anim.SetFloat("AbsVelX", Mathf.Abs(currentVelocity.x));
@@ -225,6 +220,11 @@ public class Player : MonoBehaviour
     public int GetHealth()
     {
         return health;
+    }
+
+    public void IncreaseJumps(int extraJump)
+    {
+        maxJumpCount += extraJump;
     }
 
 }
