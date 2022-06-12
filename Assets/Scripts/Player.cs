@@ -135,10 +135,10 @@ public class Player : MonoBehaviour
                 spriteRenderer.enabled = true;
             }
         }
-
-        /*        if (cooldownTimer <= 0)
+/*
+                if (cooldownTimer <= 0)
                 {
-                    if (Input.GetButtonDown("Fire1"))
+                    if (Input.GetButtonDown("Fire2"))
                     {
                         Projectile projectile = Instantiate(projectilePrefab, shootPoint.position, shootPoint.rotation);
                         projectile.Damage = Mathf.FloorToInt(projectile.Damage * projectileDamageMultiplier);
@@ -149,7 +149,8 @@ public class Player : MonoBehaviour
                 else
                 {
                     cooldownTimer -= Time.deltaTime;
-                }*/
+                }
+*/
     }
 
     private bool IsOnGround()
@@ -223,15 +224,5 @@ public class Player : MonoBehaviour
     {
         maxJumpCount += extraJump;
     }
-
-    /*
-    public void IncreaseCannonRange(int extraRange)
-    {
-        var Cannon_Beam = Player.GetComponent<Cannon_Beam>();
-        if (Cannon_Beam == null) return;
-
-        Cannon_Beam.IncreaseRange(extraRange);
-    }
-    */
 
 }

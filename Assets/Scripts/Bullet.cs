@@ -27,13 +27,6 @@ public class Bullet : MonoBehaviour
         {
             Destroy(gameObject);
         }
-        else if (projectileProgress >= projectileMaxRange)
-        {
-            transform.position = (transform.position - transform.right * speed * Time.deltaTime);
-
-
-            projectileProgress += Time.deltaTime;
-        }
 
     }
 }
