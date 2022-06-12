@@ -178,7 +178,6 @@ public class Player : MonoBehaviour
 
         if (health <= 0)
         {
-
             rb.velocity = new Vector2(0, jumpSpeed * 2);
             spriteRenderer.sortingOrder = 2;
 

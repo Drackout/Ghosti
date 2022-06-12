@@ -8,46 +8,62 @@ public class Ghost : MonoBehaviour
     [SerializeField] private Transform wallProbe;
     [SerializeField] private float probeRadius = 5;
     [SerializeField] private LayerMask probeMask;
-    [SerializeField] private float deathAngle = 20;
     [SerializeField] private int damage = 1;
     [SerializeField] private int maxHealth = 1;
     [SerializeField] private GameObject deathEffectPrefab;
     [SerializeField] private Transform deathEffectSpawnPoint;
     [SerializeField] private LineRenderer StunnedGfx;
+    [SerializeField] private bool moving = true;
+
+    [SerializeField] private float amplitude = 10.0f;
+    [SerializeField] private float frequency = 1.0f;
 
     private Rigidbody2D rb;
     private float dirX = 1;
     private int health;
-
     private float freezeTimer = 0.0f;
     private bool frozenThisFrame;
     private float thawTimer = 0.0f;
+    private float deathAngle = 1;
+
+    private Vector3 initialPosition;
+
+
+
+
 
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
         health = maxHealth;
+        initialPosition = transform.position;
     }
 
     void Update()
     {
         Vector3 currentVelocity = rb.velocity;
-
+        
         if (thawTimer > 0.0f)
         {
+            currentVelocity = Vector3.up * 30 * Mathf.Sin(20 * 2 * Mathf.PI * Time.time);
             currentVelocity.x = 0;
 
             thawTimer -= Time.deltaTime;
         }
+        else if (moving != true)
+        {
+            currentVelocity = Vector3.up * 5 * Mathf.Sin(1 * 2 * Mathf.PI * Time.time);
+            currentVelocity.x = 0;
+        }
         else
         {
-
             Collider2D collider = Physics2D.OverlapCircle(wallProbe.position, probeRadius, probeMask);
             if (collider != null)
             {
                 currentVelocity = SwitchDirection(currentVelocity);
             }
             
+            currentVelocity = Vector3.up * amplitude * Mathf.Sin(frequency * 2 * Mathf.PI * Time.time);
             currentVelocity.x = speed * dirX;
         }
 
@@ -80,24 +96,12 @@ public class Ghost : MonoBehaviour
         var player = collider.GetComponent<Player>();
         if (player != null)
         {
-            if (player.transform.position.y > transform.position.y)
-            {
-                Rigidbody2D playerRB = player.GetComponent<Rigidbody2D>();
-                float dp = Vector3.Dot(Vector3.down, playerRB.velocity.normalized);
-                float angle = Mathf.Acos(dp) * Mathf.Rad2Deg;
+            Rigidbody2D playerRB = player.GetComponent<Rigidbody2D>();
 
-                if (angle < deathAngle)
-                {
-                    DealDamage(1);
+            DealDamage(1);
 
-                    Vector2 currentPlayerVelocity = playerRB.velocity;
-                    currentPlayerVelocity.y = player.GetJumpSpeed();
-                    playerRB.velocity = currentPlayerVelocity;
-
-                    return;
-                }
-            }
             player.DealDamage(damage, transform);
+            return;
         }
     }
 
