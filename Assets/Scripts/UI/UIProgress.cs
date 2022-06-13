@@ -5,14 +5,16 @@ using UnityEngine.UI;
 
 public class UIProgress : MonoBehaviour
 {
-    [SerializeField] private FloatValue value;
+    [SerializeField] private FloatValue beamvalue;
     [SerializeField] private FloatValue maxValue;
     [SerializeField] private Image      bar;
     [SerializeField] private Gradient   color;
 
     void Update()
     {
-        bar.fillAmount = value.GetValue() / maxValue.GetValue();    
+        float value = beamvalue.GetValue();
+
+        bar.fillAmount = value;    
         if (color != null)
         {
             bar.color = color.Evaluate(bar.fillAmount);

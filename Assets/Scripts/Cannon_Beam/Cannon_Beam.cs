@@ -13,7 +13,8 @@ public class Cannon_Beam : MonoBehaviour
     [SerializeField] private LayerMask      obstacleMask;
     [SerializeField] private float          damageRadius = 5.0f;
     [SerializeField] private LayerMask      damageMask;
-    [SerializeField] private ChargeUpdater chargeUpdater;
+    [SerializeField] private ChargeUpdater  chargeUpdater;
+    [SerializeField] private FloatValue     beamValue;
 
     private float length;
     private Material material;
@@ -42,7 +43,6 @@ public class Cannon_Beam : MonoBehaviour
         {
             if (thawTimer > 0.0f)
             {
-                thawTimer -= Time.deltaTime;
                 var emission = particleSystem.emission;
                 emission.enabled = false;
                 line.enabled = false;  
@@ -99,16 +99,20 @@ public class Cannon_Beam : MonoBehaviour
             if (thawTimer>0)
             {
                 thawTimer -= Time.deltaTime;
+                beamValue.SetValue(thawTimer);
             }
+            if (beamTimer>0)
+            {
+                beamTimer -= Time.deltaTime;
+                beamValue.SetValue(beamTimer);
+            }
+            //beamTimer = 0;
+
             var emission = particleSystem.emission;
             emission.enabled = false;
             line.enabled = false;            
         }
     }
-
-
-    
-
 
     public void ChargeBeam()
     {
@@ -119,6 +123,7 @@ public class Cannon_Beam : MonoBehaviour
             thawTimer = 2.0f;
             overCharge = true;
         }
+        beamValue.SetValue(beamTimer/4);
     }
 
     private void LateUpdate()

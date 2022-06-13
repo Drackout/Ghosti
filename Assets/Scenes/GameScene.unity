@@ -1012,7 +1012,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   scoreValue: {fileID: 11400000, guid: d397ecae586bec948aeafc2b2820a31e, type: 2}
-  title: 'Score: '
+  title: 'Captured: '
 --- !u!114 &477910297
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6531,6 +6531,8 @@ MonoBehaviour:
   damageMask:
     serializedVersion: 2
     m_Bits: 128
+  chargeUpdater: {fileID: 0}
+  beamValue: {fileID: 0}
 --- !u!114 &791450635
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6791,12 +6793,12 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1205978649}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ba7df97790f05044ca36d6817c2303ac, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  value: {fileID: 11400000, guid: ccd3d2710894d8c43ac7809c6649632f, type: 2}
+  beamvalue: {fileID: 11400000, guid: ccd3d2710894d8c43ac7809c6649632f, type: 2}
   maxValue: {fileID: 11400000, guid: 7a20a04726cc360489b9f1e75c157c05, type: 2}
   bar: {fileID: 724930031}
   color:
@@ -6904,6 +6906,8 @@ MonoBehaviour:
   damageMask:
     serializedVersion: 2
     m_Bits: 128
+  chargeUpdater: {fileID: 0}
+  beamValue: {fileID: 0}
 --- !u!1001 &1360789489
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -10444,7 +10448,6 @@ MonoBehaviour:
   knockbackIntensity: 150
   knockbackDuration: 0.5
   deadTime: 3
-  timeUpdater: {fileID: 0}
   projectilePrefab: {fileID: -7515647836846484337, guid: 9fea2bf6951b8c546b6d5d9caef83f7a, type: 3}
   shootPoint: {fileID: 791450633}
   cooldownTime: 0.2
