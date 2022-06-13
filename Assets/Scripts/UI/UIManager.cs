@@ -5,9 +5,12 @@ using UnityEngine.SceneManagement;
 
 public class UIManager : MonoBehaviour
 {
+    [SerializeField] private IntValue   scoreValue;
+
     public void Play()
     {
         SceneManager.LoadScene("GameScene");
+        scoreValue.SetValue(0);
     }
 
     public void Quit()

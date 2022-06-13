@@ -14,6 +14,7 @@ public class Ghost : MonoBehaviour
     [SerializeField] private Transform deathEffectSpawnPoint;
     [SerializeField] private LineRenderer StunnedGfx;
     [SerializeField] private bool moving = true;
+    [SerializeField] private IntValue scoreValue;
 
     [SerializeField] private float amplitude = 10.0f;
     [SerializeField] private float frequency = 1.0f;
@@ -107,25 +108,28 @@ public class Ghost : MonoBehaviour
 
     public void DealDamage(int damage)
     {
-        health = health - damage;
-
-        Debug.Log($"Ouch Enemy, health={health}");
-        /*
-        if (health <= 0)
+        if (thawTimer > 0)
         {
-            Destroy(gameObject);
-            
+            health = health - damage;
 
-            if (deathEffectPrefab != null)
+            Debug.Log($"Ouch Enemy, health={health}");
+
+            if (health <= 0)
             {
-                Instantiate(deathEffectPrefab, deathEffectSpawnPoint.position, deathEffectSpawnPoint.rotation);
+                Destroy(gameObject);
+
+                if (deathEffectPrefab != null)
+                {
+                    Instantiate(deathEffectPrefab, deathEffectSpawnPoint.position, deathEffectSpawnPoint.rotation);
+                }
+                
+                scoreValue.ChangeValue(1);
+            }
+            else
+            {
+
             }
         }
-        else
-        {
-
-        }
-        */
     }
 
     void OnDrawGizmos()
