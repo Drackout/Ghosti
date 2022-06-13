@@ -13,10 +13,14 @@ public class Cannon_Beam : MonoBehaviour
     [SerializeField] private LayerMask      obstacleMask;
     [SerializeField] private float          damageRadius = 5.0f;
     [SerializeField] private LayerMask      damageMask;
+    [SerializeField] private ChargeUpdater chargeUpdater;
 
-    private float       length;
-    private Material    material;
-    private float       materialU;
+    private float length;
+    private Material material;
+    private float materialU;
+    private float beamTimer = 0.0f;
+    private bool overCharge;
+    private float thawTimer = 0.0f;
 
     void Start()
     {
@@ -27,61 +31,111 @@ public class Cannon_Beam : MonoBehaviour
 
     void Update()
     {
+        Debug.Log($"ThawTimer->{thawTimer}");
+        Debug.Log($"beamTimer->{beamTimer}");
+
         if (Input.GetButtonDown("Fire1"))
         {
             length = 0;
         }
         else if (Input.GetButton("Fire1"))
         {
-            Vector2 mousePos = Input.mousePosition;
-
-            mousePos = mainCamera.ScreenToWorldPoint(mousePos);
-
-            Vector2 startPos = transform.position;
-            Vector2 delta = (mousePos - startPos);
-            float   maxDistance = delta.magnitude;
-
-            length = Mathf.Clamp(length + Time.deltaTime * growSpeed, 0, Mathf.Min(maxLength, maxDistance));
-
-            delta.Normalize();
-            Vector2 targetPos = startPos + delta * length;
-
-            RaycastHit2D hitInfo;
-            hitInfo = Physics2D.Raycast(startPos, delta, maxDistance, obstacleMask);
-            if (hitInfo)
+            if (thawTimer > 0.0f)
             {
-                targetPos = hitInfo.point;
+                thawTimer -= Time.deltaTime;
+                var emission = particleSystem.emission;
+                emission.enabled = false;
+                line.enabled = false;  
             }
-
-            line.enabled = true;
-            line.positionCount = 2;
-            line.SetPosition(0, transform.position);
-            line.SetPosition(1, targetPos);
-
-            line.material.SetTextureOffset("_MainTex", new Vector2(materialU, 0));
-            materialU = materialU - Time.deltaTime * animSpeedU;
-
-            var emission = particleSystem.emission;
-            emission.enabled = true;
-            particleSystem.transform.position = targetPos;
-
-            var collisions = Physics2D.OverlapCircleAll(targetPos, damageRadius, damageMask);
-            foreach (var collision in collisions)
+            else
             {
-                var ghost = collision.GetComponentInParent<Ghost>();
-                if (ghost)
+                ChargeBeam();
+                Vector2 mousePos = Input.mousePosition;
+
+                mousePos = mainCamera.ScreenToWorldPoint(mousePos);
+
+                Vector2 startPos = transform.position;
+                Vector2 delta = (mousePos - startPos);
+                float   maxDistance = delta.magnitude;
+
+                length = Mathf.Clamp(length + Time.deltaTime * growSpeed, 0, Mathf.Min(maxLength, maxDistance));
+
+                delta.Normalize();
+                Vector2 targetPos = startPos + delta * length;
+
+                RaycastHit2D hitInfo;
+                hitInfo = Physics2D.Raycast(startPos, delta, maxDistance, obstacleMask);
+                if (hitInfo)
                 {
-                    ghost.Freeze();
+                    targetPos = hitInfo.point;
                 }
+
+                line.enabled = true;
+                line.positionCount = 2;
+                line.SetPosition(0, transform.position);
+                line.SetPosition(1, targetPos);
+
+                line.material.SetTextureOffset("_MainTex", new Vector2(materialU, 0));
+                materialU = materialU - Time.deltaTime * animSpeedU;
+
+                var emission = particleSystem.emission;
+                emission.enabled = true;
+                particleSystem.transform.position = targetPos;
+
+                var collisions = Physics2D.OverlapCircleAll(targetPos, damageRadius, damageMask);
+                foreach (var collision in collisions)
+                {
+                    var ghost = collision.GetComponentInParent<Ghost>();
+                    if (ghost)
+                    {
+                        ghost.Freeze();
+                    }
+                }
+                
             }
         }
         else
         {
+            if (thawTimer>0)
+            {
+                thawTimer -= Time.deltaTime;
+            }
             var emission = particleSystem.emission;
             emission.enabled = false;
             line.enabled = false;            
         }
     }
+
+
+    
+
+
+    public void ChargeBeam()
+    {
+        beamTimer += Time.deltaTime;
+
+        if (beamTimer > 5.0f)
+        {
+            thawTimer = 2.0f;
+            overCharge = true;
+        }
+    }
+
+    private void LateUpdate()
+    {
+        if (overCharge)
+        {
+            beamTimer = 0;
+        }
+
+        if ((beamTimer > 0) || (thawTimer > 0))
+        {}
+        else
+        {
+            overCharge = false;
+        }        
+    }
+
 
     public void IncreaseRange(int extraRange)
     {

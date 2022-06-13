@@ -18,7 +18,6 @@ public class Player : MonoBehaviour
     [SerializeField] private float knockbackIntensity = 100.0f;
     [SerializeField] private float knockbackDuration = 0.5f;
     [SerializeField] private float deadTime = 3.0f;
-    [SerializeField] private TimeUpdater timeUpdater;
     [SerializeField] private Projectile projectilePrefab;
     [SerializeField] private Transform shootPoint;
     [SerializeField] private float cooldownTime;

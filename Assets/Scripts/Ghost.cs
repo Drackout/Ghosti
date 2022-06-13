@@ -99,8 +99,6 @@ public class Ghost : MonoBehaviour
         {
             Rigidbody2D playerRB = player.GetComponent<Rigidbody2D>();
 
-            DealDamage(1);
-
             player.DealDamage(damage, transform);
             return;
         }
