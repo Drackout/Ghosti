@@ -224,4 +224,9 @@ public class Player : MonoBehaviour
         maxJumpCount += extraJump;
     }
 
+    public void EndGame()
+    {
+        SceneManager.LoadScene("StartMenu");
+    }
+
 }

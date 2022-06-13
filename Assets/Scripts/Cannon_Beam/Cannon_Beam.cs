@@ -32,9 +32,6 @@ public class Cannon_Beam : MonoBehaviour
 
     void Update()
     {
-        Debug.Log($"ThawTimer->{thawTimer}");
-        Debug.Log($"beamTimer->{beamTimer}");
-
         if (Input.GetButtonDown("Fire1"))
         {
             length = 0;
@@ -43,6 +40,8 @@ public class Cannon_Beam : MonoBehaviour
         {
             if (thawTimer > 0.0f)
             {
+                thawTimer -= Time.deltaTime;
+                beamValue.SetValue(thawTimer);
                 var emission = particleSystem.emission;
                 emission.enabled = false;
                 line.enabled = false;  
@@ -91,6 +90,7 @@ public class Cannon_Beam : MonoBehaviour
                         ghost.Freeze();
                     }
                 }
+                
                 
             }
         }
